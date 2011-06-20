@@ -32,8 +32,23 @@
 #undef ABI_LOGF
 #undef ABI_STAMP
 #undef ABI_LOG_MULTILINE
-#undef ABI_LOG_MEMBER
-#undef ABI_LOG_MEMBER_MULTILINE
+
+
+#undef ABI_LOG_INT
+#undef ABI_LOG_MEMBER2_INT
+#undef ABI_LOG_MEMBER3_INT
+#undef ABI_LOG_MEMBER4_INT
+
+#undef ABI_LOG_STR
+#undef ABI_LOG_MEMBER2_STR
+#undef ABI_LOG_MEMBER3_STR
+#undef ABI_LOG_MEMBER4_STR
+
+#undef ABI_LOG_STR_MULTILINE
+#undef ABI_LOG_MEMBER2_STR_MULTILINE
+#undef ABI_LOG_MEMBER3_STR_MULTILINE
+#undef ABI_LOG_MEMBER4_STR_MULTILINE
+
 
 #ifdef ABI_ENABLED
 
@@ -54,9 +69,7 @@
             ABI_LOG(abi_data_buffer); \
         } while (0)
 
-    //#define ABI_STAMP() ABI_LOGF("ABI_STAMP: %s (line: %d)", __PRETTY_FUNCTION__, __LINE__)
-    //#define ABI_STAMP() ABI_LOGF("ABI_STAMP: %s (line: %d)", __FUNCTION__, __LINE__)
-    #define ABI_STAMP() ABI_LOGF("##### ABI_STAMP #####: %s (line: %d)", __FILE__, __LINE__)
+    #define ABI_STAMP() ABI_LOGF("ABILOG: %s:%d: ############# STAMP (function:%s) #############", __FILE__, __LINE__, __PRETTY_FUNCTION__)
 
     #define ABI_LOG_MULTILINE(width, longtext) \
         /* TODO: assert width+1 < ABI_BUFLEN */ \
@@ -71,120 +84,107 @@
         } \
         while(0)
 
-    #define ABI_LOG_MEMBER1_INT(numbername) ABI_LOGF("ABILOG: " #numbername " == %d", numbername)
+    #define ABI_LOG_INT(number) ABI_LOGF("ABILOG: %s:%d: " #number " == %d", __FILE__, __LINE__, number)
 
     #define ABI_LOG_MEMBER2_INT(objectptr, numbername) \
         do { \
             if(!(objectptr)) \
-                ABI_LOG("ABILOG: " #objectptr " == NULL!"); \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
             else \
-                ABI_LOG_MEMBER1_INT((*(objectptr)).numbername); \
+                ABI_LOG_INT((objectptr)->numbername); \
         } \
         while(0)
 
     #define ABI_LOG_MEMBER3_INT(objectptr, subobjectname, numbername) \
         do { \
             if(!(objectptr)) \
-                ABI_LOG("ABILOG: " #objectptr " == NULL!"); \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
             else \
-                ABI_LOG_MEMBER2_INT((*(objectptr)).subobjectname, numbername); \
+                ABI_LOG_MEMBER2_INT((objectptr)->subobjectname, numbername); \
         } \
         while(0)
 
     #define ABI_LOG_MEMBER4_INT(objectptr, subobjectname, subsubobjectname, numbername) \
         do { \
             if(!(objectptr)) \
-                ABI_LOG("ABILOG: " #objectptr " == NULL!"); \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
             else \
-                ABI_LOG_MEMBER3_INT((*(objectptr)).subobjectname,subsubobjectname, numbername); \
-        } \
-        while(0)
-/*
-    #define ABI_LOG_MEMBER1_STR(member) \
-        do { \
-            if(!member) \
-                ABI_LOG("ABILOG: " #member " == NULL!"); \
-            else \
-                ABI_LOGF("ABILOG: " #member " == %s", member); \
+                ABI_LOG_MEMBER3_INT((objectptr)->subobjectname,subsubobjectname, numbername); \
         } \
         while(0)
 
-    #define ABI_LOG_MEMBER2_STR(object, member) \
+
+
+
+    #define ABI_LOG_STR(str) ABI_LOGF("ABILOG: %s:%d: " #str " == \"%s\"", __FILE__, __LINE__, (str))
+
+    #define ABI_LOG_MEMBER2_STR(objectptr, stringname) \
         do { \
-            if(!object) \
-                ABI_LOG("ABILOG: " #object " == NULL!"); \
+            if(!(objectptr)) \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
             else \
-                ABI_LOG_MEMBER1_STR(object->member); \
+                ABI_LOG_STR((objectptr)->stringname); \
         } \
         while(0)
 
-    #define ABI_LOG_MEMBER3_STR(object, subobject, member) \
+    #define ABI_LOG_MEMBER3_STR(objectptr, subobjectname, stringname) \
         do { \
-            if(!object) \
-                ABI_LOG("ABILOG: " #object " == NULL!"); \
+            if(!(objectptr)) \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
             else \
-                ABI_LOG_MEMBER2_STR(object->subobject, member); \
+                ABI_LOG_MEMBER2_STR((objectptr)->subobjectname, stringname); \
         } \
         while(0)
 
-    #define ABI_LOG_MEMBER4_STR(object, subobject, subsubobject, member) \
+    #define ABI_LOG_MEMBER4_STR(objectptr, subobjectname, subsubobjectname, stringname) \
         do { \
-            if(!object) \
-                ABI_LOG("ABILOG: " #object " == NULL!"); \
+            if(!(objectptr)) \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
             else \
-                ABI_LOG_MEMBER3_STR(object->subobject, object->subobject->subsubobject, member); \
+                ABI_LOG_MEMBER3_STR((objectptr)->subobjectname,subsubobjectname, stringname); \
         } \
         while(0)
-*/
+
+
+
+
+    #define ABI_LOG_STR_MULTILINE(width,str) \
+        do { \
+            ABI_LOGF("ABILOG: %s:%d: " #str " == ### MULTILINE ###:", __FILE__, __LINE__); \
+            ABI_LOG("### MULTILINE BEGIN ###"); \
+            ABI_LOG_MULTILINE(width,str); \
+            ABI_LOG("### MULTILINE END ###"); \
+        } \
+        while(0)
+
+    #define ABI_LOG_MEMBER2_STR_MULTILINE(width, objectptr, stringname) \
+        do { \
+            if(!(objectptr)) \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
+            else \
+                ABI_LOG_STR_MULTILINE(width,(objectptr)->stringname); \
+        } \
+        while(0)
+
+    #define ABI_LOG_MEMBER3_STR_MULTILINE(width,objectptr, subobjectname, stringname) \
+        do { \
+            if(!(objectptr)) \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
+            else \
+                ABI_LOG_MEMBER2_STR_MULTILINE(width,(objectptr)->subobjectname, stringname); \
+        } \
+        while(0)
+
+    #define ABI_LOG_MEMBER4_STR_MULTILINE(width, objectptr, subobjectname, subsubobjectname, stringname) \
+        do { \
+            if(!(objectptr)) \
+                ABI_LOGF("ABILOG: %s:%d: " #objectptr " == NULL!", __FILE__, __LINE__); \
+            else \
+                ABI_LOG_MEMBER3_STR_MULTILINE(width,(objectptr)->subobjectname,subsubobjectname, stringname); \
+        } \
+        while(0)
 
 
 #endif // #ifdef ABI_ENABLED
-
-
-
-
-
-
-/*
-
-#define ABI_LOG(text) \
-    #ifdef ABI_ENABLED \
-        #if defined ABI_PORTA_SIP \
-            sipsyslog(LOG_CRIT,0,"EVENT",(text)); \
-        #elif defined ABI_PORTA \
-            SYSLOG_EVT_CRIT(0, 0, 0, (text)); \
-        #else \
-            fprintf(stderr, (text)); \ //TODO: trzeba by sie upewniac czy jest stdio zainkludowany
-        #endif \
-            
-        ....
-    #endif //#ifdef ABI_ENABLED
-
-
-*/
-
-
-
-            //sipsyslog(LOG_CRIT,0,"EVENT",Parms("ABILOG: %s (line: %d)", __PRETTY_FUNCTION__, __LINE__)); 
-
-    //SYSLOG_EVT_CRIT(0, 0, 0, Parms("ABIGAIL: ThreePartyFactoryURIs[%d] == %s", SIP_USER_REF_MSN1, SipNewSettings::ThreePartyFactoryURIs[SIP_USER_REF_MSN1].c_str()));
-
-
-/*
-ABI_STAMP() // loguje ładnie miejsce (jaki plik, jaka funkcja, linijka kodu..)
-
-ABI_LOG("dupa")
-ABI_LOGF("dupa%s: %d, test","bla",5)
-ABI_LOG_MULTILINE(40,somelongtext) // 40 is width
-
-ABI_LOG_MEMBER(object, subobject, member) // object->subobject->member (sprawdza najpierw czy nie są zerami i raportuje) (member ma być char*)
-ABI_LOG_MEMBER_MULTILINE(40,object, subobject, member)
-
-*/
-
-
-
-
-
 
 //TODO: zeby w c ++ uzywal cout, lub cerr zamiast printf
