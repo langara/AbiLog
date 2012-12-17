@@ -1,3 +1,4 @@
 test:
-		#cpp abilog.h abilog.out
-		gcc abitest.c
+	gcc abitest.c
+test_preprocessor:
+	cpp abitest.c abitest.out

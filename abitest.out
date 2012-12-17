@@ -1,8 +1,0 @@
-# 1 "abitest.c"
-# 1 "<built-in>"
-# 1 "<command-line>"
-# 1 "abitest.c"
-# 1 "abilog.h" 1
-# 2 "abitest.c" 2
-
-fprintf(stderr, "ABI_STAMP: %s (line: %d)", __PRETTY_FUNCTION__, 3)
